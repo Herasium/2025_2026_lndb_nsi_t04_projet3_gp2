@@ -40,6 +40,8 @@ class Orchestrator:
         self.chat_access = [0]
         self.chat_history = [[] for i in range(10)]
         self.current_chat = 0
+        self.typing = ""
+        self.is_typing = False
         self.chat_index = {
             "villager": [1],
             "werewolf": [1,3], 
@@ -255,7 +257,14 @@ class Orchestrator:
         self._navigate_or_update("DayVote", DayVote, "vote", ui_data)
 
     async def handle_chat(self,payload):
-        self.chat_history[payload.room].append({"message":payload.message,"name":payload.name})
+        try:
+            self.chat_history[payload["room"]].append({"message":payload["message"],"name":payload["name"]})
+        except Exception as e:
+            print(e)
+
+    def send_chat(self):
+        self._safe_send("chat",{"room":self.current_chat,"message":self.typing})
+        self.typing = ""
 
     # --- Runtime Network Loop Operations ---
 

@@ -312,4 +312,6 @@ class DayVote(AbstractVotingMenu):
 
         for btn in self.buttons:
             btn.draw()
+
+        self.render_chat()
     
