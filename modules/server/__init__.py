@@ -70,7 +70,16 @@ class Server():
     async def serve(self):
         async with serve(self.receive, "0.0.0.0", 8765) as server:
             while True:
-                await self.game.run_game()
+                try:
+                    await self.game.run_game()
+                except Exception as e:
+                    logger.error(f"Game crashed! {e}. Kicking everyone.")
+                    try:
+                        for i in self.game.players:
+                            await self.game.players[i].conn.close()
+                    except:
+                        logger.error("Failed to kick everyone :(")
+                        
 
     def run(self):
         asyncio.run(self.serve())

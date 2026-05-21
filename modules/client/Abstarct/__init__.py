@@ -7,74 +7,258 @@ from modules.data import texture, data
 from modules.client.mouse import mouse
 
 class BaseGameMenu(arcade.View):
-    """Classe de base fournissant l'arrière-plan et le bouton de fermeture sécurisé."""
+
+    CHAT_X = 1480
+    CHAT_Y = 120
+    CHAT_WIDTH = 380
+    CHAT_HEIGHT = 820
+    CHAT_LINE_HEIGHT = 50
+
     def __init__(self, menu_name):
         super().__init__()
+
         self.name = menu_name
         self.background_color = arcade.color.BLACK
-        self.bg = Entity(0, 0, 1920, 1080, texture.get("join_background"))
-        self.button_quit = Entity(1820, 990, 64, 64, texture.get("quit_default"))
-        self.title_text = Text(x=1920/2, y=900, width=1000, height=80, text="")
-        self.subtitle_text = Text(x=1920/2, y=820, width=1000, height=50, text="")
-        self.typing_button = Entity(x=1700,y=600,width=300,height=100)
 
-    def on_mouse_motion(self, x: float, y: float, delta_x: float, delta_y: float):
+        self.bg = Entity(0, 0, 1920, 1080, texture.get("join_background"))
+
+        self.button_quit = Entity(
+            1820, 990, 64, 64,
+            texture.get("quit_default")
+        )
+
+        self.title_text = Text(
+            x=1920 / 2,
+            y=900,
+            width=1000,
+            height=80,
+            text=""
+        )
+
+        self.subtitle_text = Text(
+            x=1920 / 2,
+            y=820,
+            width=1000,
+            height=50,
+            text=""
+        )
+
+        self.chat_background = Entity(
+            x=self.CHAT_X - 20,
+            y=self.CHAT_Y - 20,
+            width=self.CHAT_WIDTH + 40,
+            height=self.CHAT_HEIGHT + 40
+        )
+
+        self.typing_button = Entity(
+            x=self.CHAT_X,
+            y=280,
+            width=self.CHAT_WIDTH,
+            height=55
+        )
+
+        self.chat_room_buttons = []
+
+        room_y = 200
+
+        for i in range(2):
+
+            button = Entity(
+                x=self.CHAT_X,
+                y=room_y - (i * 60),
+                width=self.CHAT_WIDTH,
+                height=50
+            )
+
+            self.chat_room_buttons.append(button)
+
+    def on_mouse_motion(self, x: float, y: float,
+                        delta_x: float, delta_y: float):
+
         mouse.position = (x, y)
 
-    def on_mouse_press(self, x: float, y: float, buttons: int, modifier: int):
+    def on_mouse_press(self, x: float, y: float,
+                       buttons: int, modifier: int):
+
         if self.button_quit.touched:
+
             self.button_quit.sprite = texture.get("quit_click")
+
             try:
                 data.orch.quit()
+
             except Exception as e:
-                print("failed to quit lol",e)
+                print("failed to quit lol", e)
                 arcade.exit()
 
         if self.typing_button.touched:
             data.orch.is_typing = True
 
-    def on_mouse_release(self, x: float, y: float, buttons: int, modifier: int):
+        for i, button in enumerate(self.chat_room_buttons):
+
+            if button.touched and i < len(data.orch.chat_access):
+
+                room_id = data.orch.chat_access[i]
+                data.orch.current_chat = room_id
+
+    def on_mouse_release(self, x: float, y: float,
+                         buttons: int, modifier: int):
+
         if self.button_quit.touched:
             self.button_quit.sprite = texture.get("quit_default")
 
-    def on_text (self, text:str):
+    def on_text(self, text: str):
+
         if data.orch.is_typing:
             data.orch.typing += text
 
     def render_chat(self):
+
         orch = data.orch
 
-        if not orch.current_chat in orch.chat_access:
+        if orch.current_chat not in orch.chat_access:
             orch.current_chat = orch.chat_access[0]
 
         current = orch.current_chat
-        messages = orch.chat_history[current][-10:] + [{"name":"","message":""} for i in range(10 - len(orch.chat_history[current][-10:]))]
 
-        y = 900
+        arcade.draw_lrbt_rectangle_filled(
+            self.chat_background.x,
+            self.chat_background.x + self.chat_background.width,
+            self.chat_background.y,
+            self.chat_background.y + self.chat_background.height,
+            (20, 20, 20, 220)
+        )
 
-        for i in messages:
-            arcade.draw_text(f"{i["name"]}: {i["message"]}",1700,y)
-            y -= 25
-        y -=50
+        current_room_name = orch.chat_rooms[current]
+
+        arcade.draw_text(
+            f"Current Room: {current_room_name}",
+            self.CHAT_X,
+            900,
+            color=arcade.color.WHITE,
+            font_name="Press Start 2P",
+            font_size=14,
+            bold=True
+        )
+
+        messages = orch.chat_history[current][-10:]
+
+        y = 850
+
+        for msg in messages:
+
+            name = msg["name"]
+            message = msg["message"]
+
+            text = (
+                f"{name}: {message}"
+                if len(name) > 0
+                else message
+            )
+
+            arcade.draw_text(
+                text,
+                self.CHAT_X,
+                y,
+                color=arcade.color.WHITE,
+                width=self.CHAT_WIDTH - 20,
+                font_name="Press Start 2P",
+                multiline=True,
+                font_size=12
+            )
+
+            y -= self.CHAT_LINE_HEIGHT
+
+        arcade.draw_lrbt_rectangle_filled(
+            self.typing_button.x,
+            self.typing_button.x + self.typing_button.width,
+            self.typing_button.y,
+            self.typing_button.y + self.typing_button.height,
+            (45, 45, 45)
+        )
+
         self.typing_button.hitbox.draw()
-        arcade.draw_text(f"{data.orch.typing}",1700,y)
+
+        typing_text = (
+            data.orch.typing
+            if len(data.orch.typing) > 0
+            else "Click to write."
+        )
+
+        arcade.draw_text(
+            typing_text,
+            self.typing_button.x + 10,
+            self.typing_button.y + 16,
+            color=arcade.color.WHITE,
+            font_name="Press Start 2P",
+            width=self.typing_button.width - 20
+        )
+
+        for i, button in enumerate(self.chat_room_buttons):
+
+            active = False
+            room_name = ""
+
+            if i < len(data.orch.chat_access):
+
+                room_id = data.orch.chat_access[i]
+
+                room_name = data.orch.chat_rooms[room_id]
+
+                if room_id == orch.current_chat:
+                    active = True
+
+            color = (
+                (80, 120, 255)
+                if active
+                else (50, 50, 50)
+            )
+
+            arcade.draw_lrbt_rectangle_filled(
+                button.x,
+                button.x + button.width,
+                button.y,
+                button.y + button.height,
+                color
+            )
+
+            button.hitbox.draw()
+
+            arcade.draw_text(
+                room_name,
+                button.x + 15,
+                button.y + 14,
+                font_name="Press Start 2P",
+                color=arcade.color.WHITE,
+                bold=active
+            )
 
     def on_key_press(self, key, modifiers):
+
         if data.orch.is_typing:
+
             if key == arcade.key.ENTER:
+
                 data.orch.is_typing = False
                 data.orch.send_chat()
+
             elif key == arcade.key.BACKSPACE:
+
                 data.orch.typing = data.orch.typing[:-1]
 
     def on_draw(self):
+
         self.clear()
-        if self.bg: self.bg.draw()
+
+        if self.bg:
+            self.bg.draw()
+
         self.title_text.draw()
         self.subtitle_text.draw()
-        self.button_quit.draw()
-        self.render_chat()
 
+        self.button_quit.draw()
+
+        self.render_chat()
 
 class WaitingMenu(BaseGameMenu):
     def __init__(self):
@@ -158,9 +342,16 @@ class NightMenu(BaseGameMenu):
         self.moon_bg = Entity(0,-1000,1920,1080,texture.get("big_moon"))
 
     def run(self, state, payload):
-        num = payload.get("current_night", 1)
-        self.title_text.text = f""
-        self.subtitle_text.text = f"NUIT N°{num} Le village s'endort... Fermez les yeux."
+        if state == "transition":
+            self.moon_bg.y = -1000
+            num = payload.get("current_night", 1)
+            self.title_text.text = f""
+            self.subtitle_text.text = f"NUIT N°{num} Le village s'endort... Fermez les yeux."
+        elif state == "back":
+            self.moon_bg.y = 0
+            self.title_text.text = f""
+            self.subtitle_text.text = f"Fin de votre tour. Rendormez vous."     
+
 
     def on_draw(self):
         self.clear()
@@ -266,6 +457,7 @@ class DayDeath(BaseGameMenu):
         self.subtitle_text.draw()
         self.deaths_text.draw()
         self.render_chat()
+        self.button_quit.draw()
 
 
 class GameEndMenu(BaseGameMenu):
@@ -288,6 +480,7 @@ class GameEndMenu(BaseGameMenu):
         self.title_text.draw()
         self.subtitle_text.draw()
         self.render_chat()
+        self.button_quit.draw()
 
 class AbstractVotingMenu(BaseGameMenu):
     """Moteur générique de rendu pour les choix ciblés sur des listes de joueurs."""

@@ -55,7 +55,20 @@ class Orchestrator:
         }
 
         self.role = None
-        
+
+        self.chat_rooms = [
+            "All",
+            "Alive",
+            "Dead",
+            "Werewolves",
+            "Pyromane",
+            "Moon Fighter",
+            "Death Eater",
+            "Mark Garyson",
+            "Fortune Teller",
+            "Witch"
+        ]
+                
         # 0: All
         # 1: Alive
         # 2: Dead
@@ -121,6 +134,9 @@ class Orchestrator:
 
     async def handle_switch_night(self, payload):
         self._navigate_or_update("NightMenu", NightMenu, "transition", payload)
+
+    async def handle_back_to_sleep(self, payload):
+        self._navigate_or_update("NightMenu", NightMenu, "back", payload)
 
     async def handle_switch_day(self, payload):
         self._navigate_or_update("DayMenu", DayMenu, "transition", payload)
@@ -306,5 +322,15 @@ class Orchestrator:
 
         await self.send("player_join", {"name": data.nickname})
 
+        count = 0
+
         while self.running:
+            count += 1
+            if count % 5 == 0:
+                self._safe_send("alive_check",{})
+            
+            if data.client.dead_connection.value != 0:
+                logger.error("Server Timeout. Quitting.")
+                self.quit()
+        
             await self.read()

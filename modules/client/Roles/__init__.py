@@ -314,4 +314,4 @@ class DayVote(AbstractVotingMenu):
             btn.draw()
 
         self.render_chat()
-    
+        self.button_quit.draw()
