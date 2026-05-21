@@ -107,7 +107,6 @@ class Orchestrator:
 
     async def handle_waiting_room_list_update(self, payload):
         self.chat_access = [0]
-        await self.send("chat",{"room": 0,"message":"Waiting"})
         self._navigate_or_update("WaitingMenu", WaitingMenu, "update", payload)
 
     async def handle_role_change(self, payload):
@@ -121,11 +120,9 @@ class Orchestrator:
         self._navigate_or_update("RoleAttribution", RoleAttribution, "change", payload)
 
     async def handle_switch_night(self, payload):
-        await self.send("chat",{"room": 1,"message":"Night Message"})
         self._navigate_or_update("NightMenu", NightMenu, "transition", payload)
 
     async def handle_switch_day(self, payload):
-        await self.send("chat",{"room": 1,"message":"Day Message"})
         self._navigate_or_update("DayMenu", DayMenu, "transition", payload)
 
     async def handle_killed(self, payload):
