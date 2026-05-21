@@ -1,4 +1,6 @@
 import arcade
+import math
+
 from modules.client.toolbox.entity import Entity
 from modules.client.toolbox.text import Text
 from modules.data import texture, data
@@ -31,6 +33,23 @@ class BaseGameMenu(arcade.View):
         if self.button_quit.touched:
             self.button_quit.sprite = texture.get("quit_default")
 
+    def render_chat(self):
+
+        orch = data.orch
+
+        if not orch.current_chat in orch.chat_access:
+            orch.current_chat = orch.chat_access[0]
+
+        current = orch.chat_access
+        messages = orch.chat_history[current][-10:]
+
+        y = 900
+
+        for i in messages:
+            arcade.draw_text(f"{i["name"]}: {i["message"]}",1800,y)
+            y -= 50
+
+
     def on_draw(self):
         self.clear()
         if self.bg: self.bg.draw()
@@ -53,9 +72,40 @@ class WaitingMenu(BaseGameMenu):
         names = [p["name"] for p in players]
         self.players_text.text = "Joueurs présents :\n" + ", ".join(names)
 
+        self.table = Entity(1920/2,1080/2,550,550,texture.get("table"),arcade.Vec2(0.5,0.5))
+
+        self.nb_perso = 0
+        self.nb_perso_enligne = []
+        self.perso = []
+
+        for n in players:
+            self.nb_perso += 1
+            self.nb_perso_enligne.append(n["name"])
+
+        a = 2*(math.pi) / self.nb_perso
+        b = 0
+        for i in self.nb_perso_enligne:
+            b += a
+            self.perso.append(
+                Text(
+                    x=320*(math.cos(b))+960,
+                    y=320*(math.sin(b))+540,
+                    text=f"{i}",
+                    align=("center", "center"),
+                    size=12,
+                )
+            )
+
+
+
     def on_draw(self):
         super().on_draw()
-        self.players_text.draw()
+        self.clear()
+        self.table.draw()
+        self.title_text.draw()
+        self.button_quit.draw()
+        for p in self.perso:
+            p.draw()
 
 
 class RoleAttribution(BaseGameMenu):

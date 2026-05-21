@@ -36,7 +36,35 @@ class Orchestrator:
         self.rx = None
         self.tx = None
         self.loop = None
+
+        self.chat_access = [0]
+        self.chat_history = [[] for i in range(10)]
+        self.current_chat = 0
+        self.chat_index = {
+            "villager": [1],
+            "werewolf": [1,3], 
+            "black_wolf": [1,3],
+            "pyromane": [1,4],
+            "moon_fighter": [1,5], 
+            "mark_garyson": [1,7],
+            "fortune_teller": [1,8],
+            "witch": [1,9],
+            "death_eater": [1,6],
+        }
+
+        self.role = None
         
+        # 0: All
+        # 1: Alive
+        # 2: Dead
+        # 3: Werewolves + Black Wolves
+        # 4: Pyromane
+        # 5: Moon Fighter
+        # 6: Death Eater
+        # 7: Mark Garyson
+        # 8: Fortune Teller
+        # 9: Witch
+
         data.orch = self
 
         # State tracking parameters to optimize menu redrawing loops
@@ -76,24 +104,34 @@ class Orchestrator:
     # --- Structural Layout State Handlers ---
 
     async def handle_waiting_room_list_update(self, payload):
+        self.chat_access = [0]
+        await self.send("chat",{"room": 0,"message":"Waiting"})
         self._navigate_or_update("WaitingMenu", WaitingMenu, "update", payload)
 
     async def handle_role_change(self, payload):
+        self.role = payload.get("role", None)
+        self.chat_access = self.chat_index.get(self.role,[1])
         self._navigate_or_update("RoleAttribution", RoleAttribution, "change", payload)
 
     async def handle_player_role(self, payload):
+        self.role = payload.get("role", None)
+        self.chat_access = self.chat_index.get(self.role,[1])
         self._navigate_or_update("RoleAttribution", RoleAttribution, "change", payload)
 
     async def handle_switch_night(self, payload):
+        await self.send("chat",{"room": 1,"message":"Night Message"})
         self._navigate_or_update("NightMenu", NightMenu, "transition", payload)
 
     async def handle_switch_day(self, payload):
+        await self.send("chat",{"room": 1,"message":"Day Message"})
         self._navigate_or_update("DayMenu", DayMenu, "transition", payload)
 
     async def handle_killed(self, payload):
+        self.chat_access = [2]
         self._navigate_or_update("KilledMenu", KilledMenu, "dead", payload)
 
     async def handle_alive(self, payload):
+        self.chat_access = self.chat_index.get(self.role,[1])
         self._navigate_or_update("AliveMenu", AliveMenu, "resurrected", payload)
 
     async def handle_day_death(self, payload):
@@ -215,6 +253,9 @@ class Orchestrator:
             "callback": lambda choice: self._safe_send("day_vote_response", {"vote": choice["id"]})
         }
         self._navigate_or_update("DayVote", DayVote, "vote", ui_data)
+
+    async def handle_chat(self,payload):
+        self.chat_history[payload.room].append({"message":payload.message,"name":payload.name})
 
     # --- Runtime Network Loop Operations ---
 

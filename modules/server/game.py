@@ -1,4 +1,5 @@
 from modules.logger import Logger
+from modules.server.opcodes import opcodes
 import random
 import json
 import asyncio
@@ -30,7 +31,17 @@ class Game:
         self.to_kill = []
         self.current_day = 0
         self.finished = False
+
+        opcodes["chat"] = self.chat
+
         logger.debug(f"Game core initialized. Target min players: {self.min_player_count}. Registered roles: {self.roles}")
+
+    def chat(self,message,client):
+        text = message["message"]
+        room = message["room"]
+
+        for i in self.players:
+            self.send_player(i,"chat",{"message":text,"room":room,"name":client.name})
 
     def set_game_flags(self):
         logger.info("Resetting/Configuring tactical game modification flags.")
@@ -740,7 +751,7 @@ class Game:
             if id in self.players:
                 players.append({"id": id, "name": self.players[id].name})
 
-        await asyncio.sleep(1)
+        await asyncio.sleep(7)
         
         self.status = 0
         await self.send_all_players_waiting("waiting_room_list_update", {"players": players, "status": self.status})

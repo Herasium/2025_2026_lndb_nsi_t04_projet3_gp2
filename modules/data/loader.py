@@ -70,6 +70,8 @@ class Loader:
         texture.add("load_bar18",arcade.Sprite("assets/load_bars/load_bar18.png"))
         texture.add("load_bar19",arcade.Sprite("assets/load_bars/load_bar19.png"))
 
+        texture.add("table",arcade.Sprite("assets/homescreen/table.png"))
+
     def load(self):
         self.load_images()
         self.load_font()

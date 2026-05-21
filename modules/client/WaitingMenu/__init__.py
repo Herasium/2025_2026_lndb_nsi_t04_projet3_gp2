@@ -11,7 +11,7 @@ import arcade
 
 class WaitingMenu(arcade.View):
 
-    def __init__(self,data,status):
+    def __init__(self,data):
 
         super().__init__()
         self.background_color: arcade.color = arcade.color.BLACK
