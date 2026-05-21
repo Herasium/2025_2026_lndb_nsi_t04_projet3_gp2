@@ -36,12 +36,12 @@ class Game:
 
         logger.debug(f"Game core initialized. Target min players: {self.min_player_count}. Registered roles: {self.roles}")
 
-    def chat(self,message,client):
+    async def chat(self,message,client):
         text = message["message"]
         room = message["room"]
 
         for i in self.players:
-            self.send_player(i,"chat",{"message":text,"room":room,"name":client.name})
+            await self.send_player(i,"chat",{"message":text,"room":room,"name":client.name})
 
     def set_game_flags(self):
         logger.info("Resetting/Configuring tactical game modification flags.")

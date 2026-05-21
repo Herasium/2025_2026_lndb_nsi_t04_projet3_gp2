@@ -40,7 +40,7 @@ class BaseGameMenu(arcade.View):
         if not orch.current_chat in orch.chat_access:
             orch.current_chat = orch.chat_access[0]
 
-        current = orch.chat_access
+        current = orch.current_chat
         messages = orch.chat_history[current][-10:]
 
         y = 900
@@ -56,6 +56,7 @@ class BaseGameMenu(arcade.View):
         self.title_text.draw()
         self.subtitle_text.draw()
         self.button_quit.draw()
+        self.render_chat()
 
 
 class WaitingMenu(BaseGameMenu):
