@@ -37,7 +37,7 @@ Tous les graphismes ont été réalisés par notre équipe dans un style pixel a
 ### 🌐 Un jeu multijoueur
 Les joueurs peuvent rejoindre une partie en ligne et interagir en temps réel.
 
-[![Informations pour les rôles](https://img.shields.io/badge/Informations%20pour%20les%20r%C3%B4les-1782DE)](https://github.com/Herasium/2025_2026_lndb_nsi_t04_projet3_gp2/edit/main/infos.md)
+[![Informations pour les rôles](https://img.shields.io/badge/Informations%20pour%20les%20r%C3%B4les-1782DE)](https://github.com/Herasium/2025_2026_lndb_nsi_t04_projet3_gp2/blob/main/infos.md)
 
 <details>
 <summary>  <h1>📸 Aperçu  </h1>  </summary>
@@ -64,5 +64,5 @@ Les joueurs peuvent rejoindre une partie en ligne et interagir en temps réel.
 ### 2. Installer les dépendances
 ```pip install -r requirements.txt```  
 
-## ▶️ Lancer le projet
+### ▶️ Lancer le projet
 ```python main.py```
