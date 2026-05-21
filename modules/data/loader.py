@@ -27,6 +27,12 @@ class Loader:
         texture.add("join_click",arcade.Sprite("assets/buttons/join_click.png"))
         texture.add("join_hover",arcade.Sprite("assets/buttons/join_hover.png"))
 
+        texture.add("ip",arcade.Sprite("assets/buttons/add_adresse.png"))
+        texture.add("name",arcade.Sprite("assets/buttons/add_nom.png"))
+        texture.add("name_typing",arcade.Sprite("assets/buttons/add_typing.png"))
+        texture.add("ip_typing",arcade.Sprite("assets/buttons/add_typing.png"))
+
+
         texture.add("nickname",arcade.Sprite("assets/buttons/Nickname_Button.png"))
         texture.add("nickname_typing",arcade.Sprite("assets/buttons/Nickname_Button_Typing.png"))
 

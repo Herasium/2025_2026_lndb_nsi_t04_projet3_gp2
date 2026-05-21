@@ -17,8 +17,10 @@ class NewserverMenu(arcade.View):
         self.name = "NewserverMenu"
         self.game_menu = game_menu
 
-        self.button_join = Entity(100,200,400,100,texture.get("join_default"))
+        self.button_join = Entity(0,0,400,100,texture.get("add_default"))
         self.button_quit = Entity(1820, 990, 64, 64,texture.get("quit_default"))
+        self.name_typing = Entity(100,300,400,100,texture.get("name_typing"))
+        self.ip_typing = Entity(700, 300, 400, 100,texture.get("ip_typing"))
         self.x = 0
 
         self.input_name = Entity(100,300,400,100, texture.get("name"))
@@ -70,7 +72,7 @@ class NewserverMenu(arcade.View):
             self.input_ip.sprite = texture.get("ip_typing")
 
         if self.button_join.touched and self.done_ip and self.ip and len(self.ip)!= 0 and self.done_name and self.name and len(self.name)!= 0:
-            self.button_join.sprite = texture.get("join_default")
+            self.button_join.sprite = texture.get("add_default")
             data.ip = self.ip
             data.name = self.name
             data.client.display(self.game_menu)
@@ -78,7 +80,7 @@ class NewserverMenu(arcade.View):
         if self.button_quit.touched :
             self.button_quit.sprite = texture.get("quit_default")
             data.client.display(self.game_menu)
-            
+
         if self.input_name.touched:
             self.is_typing_name = True
             self.is_typing_ip = False  # désactive l'autre
