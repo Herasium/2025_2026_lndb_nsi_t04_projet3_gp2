@@ -88,6 +88,7 @@ class MainMenu(arcade.View):
             elif key == arcade.key.BACKSPACE:
                 self.nickname = self.nickname[:-1]
                 self.nickname_text.text = self.nickname
+                
     def on_draw(self):
         self.clear()
         self.bg.draw()

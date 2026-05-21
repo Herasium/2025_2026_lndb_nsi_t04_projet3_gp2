@@ -142,7 +142,7 @@ class GameMenu(arcade.View):
             arcade.exit()
 
         if self.add_server.touched :
-            data.client.display(NewserverMenu())
+            data.client.display(NewserverMenu(self))
 
         for i in range(len(self.case_server)):
             server = self.data[i]
