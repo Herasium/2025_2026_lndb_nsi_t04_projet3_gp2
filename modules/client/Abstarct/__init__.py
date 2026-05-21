@@ -48,7 +48,7 @@ class BaseGameMenu(arcade.View):
             orch.current_chat = orch.chat_access[0]
 
         current = orch.current_chat
-        messages = orch.chat_history[current][-10:]
+        messages = orch.chat_history[current][-10:] + [{"name":"","message":""} for i in range(10 - len(orch.chat_history[current][-10:]))]
 
         y = 900
 
