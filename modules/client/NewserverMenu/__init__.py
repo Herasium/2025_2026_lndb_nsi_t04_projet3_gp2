@@ -78,30 +78,46 @@ class NewserverMenu(arcade.View):
         if self.button_quit.touched :
             self.button_quit.sprite = texture.get("quit_default")
             data.client.display(self.game_menu)
+            
+        if self.input_name.touched:
+            self.is_typing_name = True
+            self.is_typing_ip = False  # désactive l'autre
+            self.input_name.sprite = texture.get("name_typing")
+            self.input_ip.sprite = texture.get("ip")
 
-    def on_text (self, text:str):
-        if self.is_typing_name == True and len(self.name)<=10:
+        elif self.input_ip.touched:
+            self.is_typing_ip = True
+            self.is_typing_name = False
+            self.input_ip.sprite = texture.get("ip_typing")
+            self.input_name.sprite = texture.get("name")
+
+
+    def on_text(self, text: str):
+        if self.is_typing_name and len(self.name) <= 10:
             self.name += text
             self.name_text.text = self.name
-        
-        if self.is_typing_ip == True and len(self.ip)<=10:
+        elif self.is_typing_ip and len(self.ip) <= 16:  
             self.ip += text
             self.ip_text.text = self.ip
 
+
+
     def on_key_press(self, key, modifiers):
-        if self.is_typing_name and self.is_typing_ip:
-            if key == arcade.key.ENTER:
+        if key == arcade.key.ENTER:
+            if self.is_typing_name:
                 self.is_typing_name = False
                 self.done_name = True
-                data.client.display(self.game_menu)
-                data.name = self.name
+                self.input_name.sprite = texture.get("name")
+            if self.is_typing_ip:
                 self.is_typing_ip = False
                 self.done_ip = True
-                data.ip = self.ip
-            
-            elif key == arcade.key.BACKSPACE:
+                self.input_ip.sprite = texture.get("ip")
+
+        elif key == arcade.key.BACKSPACE:
+            if self.is_typing_name:
                 self.name = self.name[:-1]
                 self.name_text.text = self.name
+            elif self.is_typing_ip:
                 self.ip = self.ip[:-1]
                 self.ip_text.text = self.ip
 
