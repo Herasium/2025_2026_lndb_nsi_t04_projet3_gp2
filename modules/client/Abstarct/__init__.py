@@ -16,6 +16,7 @@ class BaseGameMenu(arcade.View):
         self.button_quit = Entity(1820, 990, 64, 64, texture.get("quit_default"))
         self.title_text = Text(x=1920/2, y=900, width=1000, height=80, text="")
         self.subtitle_text = Text(x=1920/2, y=820, width=1000, height=50, text="")
+        self.typing_button = Entity(x=1700,y=600,width=300,height=100)
 
     def on_mouse_motion(self, x: float, y: float, delta_x: float, delta_y: float):
         mouse.position = (x, y)
@@ -29,12 +30,18 @@ class BaseGameMenu(arcade.View):
                 print("failed to quit lol",e)
                 arcade.exit()
 
+        if self.typing_button.touched:
+            data.orch.is_typing = True
+
     def on_mouse_release(self, x: float, y: float, buttons: int, modifier: int):
         if self.button_quit.touched:
             self.button_quit.sprite = texture.get("quit_default")
 
-    def render_chat(self):
+    def on_text (self, text:str):
+        if data.orch.is_typing:
+            data.orch.typing += text
 
+    def render_chat(self):
         orch = data.orch
 
         if not orch.current_chat in orch.chat_access:
@@ -46,9 +53,19 @@ class BaseGameMenu(arcade.View):
         y = 900
 
         for i in messages:
-            arcade.draw_text(f"{i["name"]}: {i["message"]}",1800,y)
-            y -= 50
+            arcade.draw_text(f"{i["name"]}: {i["message"]}",1700,y)
+            y -= 25
+        y -=50
+        self.typing_button.hitbox.draw()
+        arcade.draw_text(f"{data.orch.typing}",1700,y)
 
+    def on_key_press(self, key, modifiers):
+        if data.orch.is_typing:
+            if key == arcade.key.ENTER:
+                data.orch.is_typing = False
+                data.orch.send_chat()
+            elif key == arcade.key.BACKSPACE:
+                data.orch.typing = data.orch.typing[:-1]
 
     def on_draw(self):
         self.clear()
@@ -107,6 +124,7 @@ class WaitingMenu(BaseGameMenu):
         self.button_quit.draw()
         for p in self.perso:
             p.draw()
+        self.render_chat()
 
 
 class RoleAttribution(BaseGameMenu):
@@ -154,6 +172,7 @@ class NightMenu(BaseGameMenu):
         self.houses_bg.draw()
 
         self.button_quit.draw()
+        self.render_chat()
 
         
 
@@ -189,6 +208,7 @@ class DayMenu(BaseGameMenu):
         self.houses_bg_day.draw()
 
         self.button_quit.draw()
+        self.render_chat()
 
     def on_update(self, delta_time: float):
         if self.sun_bg.y < 0:
@@ -245,6 +265,7 @@ class DayDeath(BaseGameMenu):
         self.title_text.draw()
         self.subtitle_text.draw()
         self.deaths_text.draw()
+        self.render_chat()
 
 
 class GameEndMenu(BaseGameMenu):
@@ -266,6 +287,7 @@ class GameEndMenu(BaseGameMenu):
         self.sun_bg.draw()
         self.title_text.draw()
         self.subtitle_text.draw()
+        self.render_chat()
 
 class AbstractVotingMenu(BaseGameMenu):
     """Moteur générique de rendu pour les choix ciblés sur des listes de joueurs."""
