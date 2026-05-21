@@ -204,7 +204,8 @@ class Game:
         per_roles = {}
 
         for i, player_id in enumerate(player_ids):
-            assigned_role = pool[i]
+            #assigned_role = pool[i]
+            assigned_role = "witch"
             result[player_id] = assigned_role
 
             if assigned_role not in per_roles:
