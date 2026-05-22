@@ -326,7 +326,7 @@ class Orchestrator:
 
         while self.running:
             count += 1
-            if count % 5 == 0:
+            if count % 50 == 0:
                 self._safe_send("alive_check",{})
             
             if data.client.dead_connection.value != 0:
