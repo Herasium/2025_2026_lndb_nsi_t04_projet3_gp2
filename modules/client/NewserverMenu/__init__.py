@@ -126,6 +126,8 @@ class NewserverMenu(arcade.View):
                 self.is_typing_ip = False
                 self.done_ip = True
                 self.input_ip.sprite = texture.get("ip")
+            data.servers.append({"ip": self.ip, "name": self.name},)
+            print(data.servers)
 
         elif key == arcade.key.BACKSPACE:
             if self.is_typing_name:

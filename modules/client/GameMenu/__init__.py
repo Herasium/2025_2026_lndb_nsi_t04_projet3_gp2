@@ -25,10 +25,12 @@ class GameMenu(arcade.View):
         self.name = "GameMenu"
 
         self.data: List[str] = []
-        self.servers = [
-            {"ip":"localhost","name":"localhost"},
-            {"ip":"192.168.3.97","name":"server"},
-        ]
+        # self.servers = [
+        #     {"ip":"localhost","name":"localhost"},
+        #     {"ip":"192.168.3.97","name":"server"},
+        # ]
+
+        # self.servers.append({"ip": data.ip, "name": data.name},)
 
         #1: En Cours
         #0: Hors Ligne
@@ -52,10 +54,10 @@ class GameMenu(arcade.View):
 
     async def _fetch_and_update(self) -> None:
         try:
-            for i in self.servers:     
+            for i in data.servers:     
                 self.data.append({"nom": i["name"], "nombre": 0, "max": 0, "status": 1})
 
-            for index, i in enumerate(self.servers):     
+            for index, i in enumerate(data.servers):     
                 try:
                     new_data = await data.client.get_server_informations(i["ip"], i["name"])
                 except Exception as exc:
@@ -147,7 +149,7 @@ class GameMenu(arcade.View):
         for i in range(len(self.case_server)):
             server = self.data[i]
             button = self.case_server[i]
-            s = self.servers[i]
+            s = data.servers[i]
             ip = s["ip"]
             name = s["name"]
             if button.touched and server["status"] == 2:
