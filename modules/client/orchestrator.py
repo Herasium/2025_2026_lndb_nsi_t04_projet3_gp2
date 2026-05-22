@@ -60,7 +60,7 @@ class Orchestrator:
             "All",
             "Alive",
             "Dead",
-            "Werewolves",
+            "Wolves",
             "Pyromane",
             "Moon Fighter",
             "Death Eater",
