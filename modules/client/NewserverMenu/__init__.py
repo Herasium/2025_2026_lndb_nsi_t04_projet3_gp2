@@ -151,6 +151,8 @@ class NewserverMenu(arcade.View):
            
                 if not self.ip:
                     self.input_ip.sprite = texture.get("ip")
+
+                    
     def on_draw(self):
         self.clear()
         self.box.draw()
