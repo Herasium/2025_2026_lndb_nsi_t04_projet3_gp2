@@ -19,7 +19,7 @@ class NewserverMenu(arcade.View):
         BOX_X = (1920 - BOX_W) // 2
         BOX_Y = (1080 - BOX_H) // 2
 
-        INPUT_W, INPUT_H = 400, 100
+        INPUT_W, INPUT_H = 450, 100
         INPUT_X = (1920 - INPUT_W) // 2
 
         GAP    = (BOX_H - INPUT_H * 2) // 3
