@@ -125,11 +125,17 @@ class NewserverMenu(arcade.View):
                 self.done_name = True
                 # Si le nom est vide -> texture avec "Nom", sinon -> fond uni
                 self.input_name.sprite = texture.get("name") if not self.name else texture.get("name_typing")
+                data.name = self.name
             
             if self.is_typing_ip:
                 self.is_typing_ip = False
                 self.done_ip = True
+                self.input_ip.sprite = texture.get("ip")
                 self.input_ip.sprite = texture.get("ip") if not self.ip else texture.get("ip_typing")
+                data.ip = self.ip
+            
+            data.servers.append({"ip": data.ip, "name": data.name},)
+            print(data.servers)
 
         elif key == arcade.key.BACKSPACE:
             if self.is_typing_name:

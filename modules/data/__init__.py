@@ -22,6 +22,10 @@ class Data:
         self.MOUSE_SENSI = 40
         self.UI_EDITOR_GRID_SIZE: int = 27
         self.MAX_SCROLL: int = 1080
+        self.servers = [
+            {"ip":"localhost","name":"localhost"},
+            {"ip":"192.168.3.97","name":"server"},
+        ]
 
 data = Data()
 texture = Texture()
