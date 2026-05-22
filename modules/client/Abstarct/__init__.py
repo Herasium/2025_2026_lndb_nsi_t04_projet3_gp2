@@ -382,7 +382,10 @@ class DayMenu(BaseGameMenu):
         self.houses_bg_day = Entity(0,0,1920,1080,texture.get("houses_background_day"))
         self.sky_bg_day = Entity(0,0,1920,1080,texture.get("day_sky"))
         self.sun_bg = Entity(0,-700,1920,1080,texture.get("sun"))
-
+        if hasattr(self.title_text, "color"):
+            self.title_text.color = arcade.color.BLACK
+        if hasattr(self.subtitle_text, "color"):
+            self.subtitle_text.color = arcade.color.BLACK
     def run(self, state, payload):
         num = payload.get("current_day", 1)
         self.title_text.text = f"JOUR N°{num}"

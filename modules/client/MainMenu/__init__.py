@@ -56,61 +56,38 @@ class MainMenu(arcade.View):
 
 
     @profile
-    def on_mouse_release(self, x, y, buttons, modifier):
-        if self.button_join.touched and self.done_ip and self.ip and self.done_name and self.name:
-            self.button_join.sprite = texture.get("add_default")
-            data.ip = self.ip
-            data.name = self.name
-            data.client.display(self.game_menu)
+    def on_mouse_release(self,x,y,buttons,modifier):
+        if self.input_nickname.touched :
+            self.is_typing = True
+            self.input_nickname.sprite = texture.get("nickname_typing")
 
-        if self.button_quit.touched:
+        if self.button_join.touched and self.done and self.nickname and len(self.nickname)!= 0 :
+            self.button_join.sprite = texture.get("join_default")
+            data.nickname = self.nickname
+            data.client.display(GameMenu())
+            
+        if self.button_setting.touched :
+            self.button_setting.sprite = texture.get("settings_default")
+
+        if self.button_quit.touched :
             self.button_quit.sprite = texture.get("quit_default")
-            data.client.display(self.game_menu)
+            arcade.exit()
 
-        if self.input_name.touched:
-            self.is_typing_name = True
-            self.is_typing_ip = False
-            self.input_name.sprite = texture.get("name_typing")
-            self.input_ip.sprite = texture.get("ip") if len(self.ip) == 0 else texture.get("ip_full")
-
-        elif self.input_ip.touched:
-            self.is_typing_ip = True
-            self.is_typing_name = False
-            self.input_ip.sprite = texture.get("ip_typing")
-            self.input_name.sprite = texture.get("name") if len(self.name) == 0 else texture.get("name_full")
-
-    def on_text(self, text: str):
-        if self.is_typing_name and len(self.name) <= 10:
-            self.name += text
-            self.name_text.text = self.name
-            if len(self.name) >= 10:
-                self.input_name.sprite = texture.get("name_full")
-        elif self.is_typing_ip and len(self.ip) <= 16:
-            self.ip += text
-            self.ip_text.text = self.ip
-            if len(self.ip) >= 16:
-                self.input_ip.sprite = texture.get("ip_full")
+    def on_text (self, text:str):
+        if self.is_typing == True and len(self.nickname)<=10:
+            self.nickname += text
+            self.nickname_text.text = self.nickname
 
     def on_key_press(self, key, modifiers):
-        if key == arcade.key.ENTER:
-            if self.is_typing_name:
-                self.is_typing_name = False
-                self.done_name = True
-                self.input_name.sprite = texture.get("name") if len(self.name) == 0 else texture.get("name_full")
-            if self.is_typing_ip:
-                self.is_typing_ip = False
-                self.done_ip = True
-                self.input_ip.sprite = texture.get("ip") if len(self.ip) == 0 else texture.get("ip_full")
-
-        elif key == arcade.key.BACKSPACE:
-            if self.is_typing_name:
-                self.name = self.name[:-1]
-                self.name_text.text = self.name
-                self.input_name.sprite = texture.get("name_typing")
-            elif self.is_typing_ip:
-                self.ip = self.ip[:-1]
-                self.ip_text.text = self.ip
-                self.input_ip.sprite = texture.get("ip_typing")
+        if self.is_typing:
+            if key == arcade.key.ENTER:
+                self.is_typing = False
+                self.done = True
+                data.client.display(GameMenu())
+                data.nickname = self.nickname
+            elif key == arcade.key.BACKSPACE:
+                self.nickname = self.nickname[:-1]
+                self.nickname_text.text = self.nickname
                 
     def on_draw(self):
         self.clear()
