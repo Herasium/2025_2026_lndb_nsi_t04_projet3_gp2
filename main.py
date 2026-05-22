@@ -2,7 +2,7 @@ import threading
 
 from modules.client import Client
 from modules.client.MainMenu import MainMenu
-
+from modules.client.GameMenu import GameMenu
 from modules.data.loader import Loader
 from modules.data import data
 
@@ -19,7 +19,7 @@ def main():
     data.client = client
     data.loop = start_async_loop()
 
-    client.display(MainMenu())
+    client.display(GameMenu())
     client.run()
 
 def start_async_loop() -> asyncio.AbstractEventLoop:
