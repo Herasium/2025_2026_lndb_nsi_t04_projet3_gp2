@@ -132,12 +132,12 @@ class BaseGameMenu(arcade.View):
         current_room_name = orch.chat_rooms[current]
 
         arcade.draw_text(
-            f"Current Room: {current_room_name}",
+            f"Room: {current_room_name}",
             self.CHAT_X,
             900,
             color=arcade.color.WHITE,
             font_name="Press Start 2P",
-            font_size=14,
+            font_size=13,
             bold=True
         )
 
@@ -177,7 +177,7 @@ class BaseGameMenu(arcade.View):
             (45, 45, 45)
         )
 
-        self.typing_button.hitbox.draw()
+
 
         typing_text = (
             data.orch.typing
@@ -222,7 +222,6 @@ class BaseGameMenu(arcade.View):
                 color
             )
 
-            button.hitbox.draw()
 
             arcade.draw_text(
                 room_name,
