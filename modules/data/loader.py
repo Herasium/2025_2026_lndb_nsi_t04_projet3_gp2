@@ -54,6 +54,9 @@ class Loader:
         texture.add("add_click",arcade.Sprite("assets/buttons/add_click.png"))
         texture.add("add_hover",arcade.Sprite("assets/buttons/add_hover.png"))
 
+
+        texture.add("box",arcade.Sprite("assets/server_join/server_bg.png"))
+
         # Load bars
         texture.add("load_bar00",arcade.Sprite("assets/load_bars/load_bar00.png"))
         texture.add("load_bar01",arcade.Sprite("assets/load_bars/load_bar01.png"))

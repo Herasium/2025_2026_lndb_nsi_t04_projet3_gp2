@@ -10,44 +10,56 @@ import arcade
 
 class NewserverMenu(arcade.View):
 
-    def __init__(self,game_menu):
-
+    def __init__(self, game_menu):
         super().__init__()
         self.background_color: arcade.color = arcade.color.BLACK
-        self.name = "NewserverMenu"
         self.game_menu = game_menu
 
-        self.button_join = Entity(0,0,400,100,texture.get("add_default"))
-        self.button_quit = Entity(1820, 990, 64, 64,texture.get("quit_default"))
-        self.name_typing = Entity(100,300,400,100,texture.get("name_typing"))
-        self.ip_typing = Entity(700, 300, 400, 100,texture.get("ip_typing"))
-        self.x = 0
+        BOX_W, BOX_H = 1000, 600
+        BOX_X = (1920 - BOX_W) // 2
+        BOX_Y = (1080 - BOX_H) // 2
 
-        self.input_name = Entity(100,300,400,100, texture.get("name"))
-        self.done_name = True
+        INPUT_W, INPUT_H = 400, 100
+        PADDING = (BOX_W - INPUT_W * 2) // 3
+
+        NAME_X = BOX_X + PADDING
+        IP_X   = BOX_X + PADDING * 2 + INPUT_W
+        INPUT_Y = BOX_Y + (BOX_H - INPUT_H) // 2
+
+        JOIN_X = (1920 - INPUT_W) // 2
+        JOIN_Y = BOX_Y - 20 - INPUT_H
+
+        self.box         = Entity(BOX_X,  BOX_Y,  BOX_W,   BOX_H,   texture.get("box"))
+        self.input_name  = Entity(NAME_X, INPUT_Y, INPUT_W, INPUT_H, texture.get("name"))
+        self.input_ip    = Entity(IP_X,   INPUT_Y, INPUT_W, INPUT_H, texture.get("ip"))
+        self.button_join = Entity(JOIN_X, JOIN_Y,  INPUT_W, INPUT_H, texture.get("add_default"))
+        self.button_quit = Entity(1820, 990, 64, 64, texture.get("quit_default"))
+
         self.name = ""
+        self.ip   = ""
         self.is_typing_name = False
+        self.is_typing_ip   = False
+        self.done_name = True
+        self.done_ip   = True
+
         self.name_text = arcade.Text(
             text="",
-            x=125,
-            y=335,
+            x=NAME_X + 25,
+            y=INPUT_Y + 35,
             color=arcade.color.WHITE,
             font_size=18,
             font_name="Press Start 2P"
         )
-        self.input_ip = Entity(700,300,400,100, texture.get("ip"))
-        self.done_ip = True
-        self.ip = ""
-        self.is_typing_ip = False
         self.ip_text = arcade.Text(
             text="",
-            x=725,
-            y=335,
+            x=IP_X + 25,
+            y=INPUT_Y + 35,
             color=arcade.color.WHITE,
             font_size=18,
             font_name="Press Start 2P"
         )
-        
+
+        self.x = 0
 
     @profile
     def on_mouse_motion(
@@ -125,6 +137,7 @@ class NewserverMenu(arcade.View):
 
     def on_draw(self):
         self.clear()
+        self.box.draw()
         self.button_quit.draw()
         self.button_join.draw()
         self.input_name.draw()
